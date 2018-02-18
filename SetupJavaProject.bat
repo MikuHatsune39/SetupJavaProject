@@ -1,7 +1,11 @@
 @ECHO OFF
 SET /P _inputjar= Please enter a name for your project:
 SET /P _inputpath= Please enter the path to the location you wish to work from:
-cd "%_inputpath%"
+if exist "%_inputpath%" ( 
+    cd "%_inputpath%" 
+) else ( 
+    mkdir "%_inputpath%" && cd "%_inputpath%"
+)
 mkdir src
 mkdir bin
 mkdir jar
@@ -9,10 +13,10 @@ rem Making Main
 SET /P _inputmain= Please enter a name for your Main class:
 echo public class %_inputmain% > .\src\"%_inputmain%".java
 echo { >> .\src\"%_inputmain%".java
-echo 	 public static void main(String[] args) >> .\src\"%_inputmain%".java
-echo 	 { >> .\src\"%_inputmain%".java
+echo 	public static void main(String[] args) >> .\src\"%_inputmain%".java
+echo 	{ >> .\src\"%_inputmain%".java
 echo 		//Main method >> .\src\"%_inputmain%".java
-echo 	 } >> .\src\"%_inputmain%".java
+echo 	} >> .\src\"%_inputmain%".java
 echo } >> .\src\"%_inputmain%".java
 rem Making Run
 echo @ECHO OFF > Run.bat
