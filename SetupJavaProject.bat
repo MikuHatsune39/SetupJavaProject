@@ -21,27 +21,22 @@ echo 	}>> .\src\"%_inputmain%".java
 echo }>> .\src\"%_inputmain%".java
 rem Making Run
 echo @ECHO OFF > Run.bat
-echo rem cls >> Run.bat
 echo java -cp bin\ %_inputmain% >> Run.bat
 rem Making Compile
 echo @ECHO OFF > Compile.bat
-echo rem cls >> Compile.bat
 echo powershell.exe "Get-ChildItem -Recurse src\*.java | Resolve-Path -Relative" ^> src.txt >> Compile.bat
 echo javac -d bin @src.txt >> Compile.bat
 echo del src.txt >> Compile.bat
 rem Making BuildJar
 echo @ECHO OFF > BuildJar.bat
-echo rem cls >> BuildJar.bat
 echo cd .\bin >> BuildJar.bat
 echo powershell.exe "Get-ChildItem -Recurse .\*.class | Resolve-Path -Relative" ^> bin.txt >> BuildJar.bat
 echo jar cfe "%_inputjar%".jar "%_inputmain%" @bin.txt >> BuildJar.bat
 echo del bin.txt >> BuildJar.bat
 echo cd ..\ >> BuildJar.bat
-echo move .\bin\%_inputjar%.jar .\jar >> BuildJar.bat
-echo rem cls >> BuildJar.bat
+echo move .\bin\%_inputjar%.jar .\jar ^>nul >> BuildJar.bat
 rem Making RunJar
 echo @ECHO OFF > RunJar.bat
-echo rem cls >> RunJar.bat
 echo cd .\jar >> RunJar.bat
 echo %_inputjar%.bat >> RunJar.bat
 echo cd .. >> RunJar.bat
@@ -53,7 +48,10 @@ cd .\jar
 rem Making bat to run the jar
 echo @ECHO OFF > "%_inputjar%".bat
 echo java -jar "%_inputjar%".jar >> "%_inputjar%".bat
-echo echo %%cmdcmdline%%^|find /i """%%~f0"""^>nul ^&^& pause >> "%_inputjar%".bat
-echo cd ..\ >> "%_inputjar%".bat
+echo echo.%%cmdcmdline%% ^| find /I "%%~0" ^>nul >> "%_inputjar%".bat
+echo if not errorlevel 1 pause >> "%_inputjar%".bat
+cd ..\..\
 echo Done
-pause
+rem Pause if run from GUI
+echo.%cmdcmdline% | find /I "%~0" >nul
+if not errorlevel 1 pause
